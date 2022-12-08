@@ -29,9 +29,10 @@ describe('/course', () => {
             .expect(src_1.HTTP_STATUSES.NOT_FOUND_404);
     }));
     it(`should'nt create course with incorrect input data`, () => __awaiter(void 0, void 0, void 0, function* () {
+        const data = { title: '' };
         yield (0, supertest_1.default)(src_1.app)
             .post('/courses')
-            .send({ title: '' })
+            .send(data)
             .expect(src_1.HTTP_STATUSES.BAD_REQUEST_400);
         yield (0, supertest_1.default)(src_1.app)
             .get('/courses')
@@ -39,9 +40,10 @@ describe('/course', () => {
     }));
     let createdCourse1 = null;
     it(`should create course with correct input data`, () => __awaiter(void 0, void 0, void 0, function* () {
+        const data = { title: 'it-incubator course' };
         const createResponse = yield (0, supertest_1.default)(src_1.app)
             .post('/courses')
-            .send({ title: 'it-incubator course' })
+            .send(data)
             .expect(src_1.HTTP_STATUSES.CREATED_201);
         createdCourse1 = createResponse.body;
         expect(createdCourse1).toEqual({
@@ -54,9 +56,10 @@ describe('/course', () => {
     }));
     let createdCourse2 = null;
     it(`create one more course`, () => __awaiter(void 0, void 0, void 0, function* () {
+        const data = { title: 'it-incubator course 2' };
         const createResponse = yield (0, supertest_1.default)(src_1.app)
             .post('/courses')
-            .send({ title: 'it-incubator course 2' })
+            .send(data)
             .expect(src_1.HTTP_STATUSES.CREATED_201);
         createdCourse2 = createResponse.body;
         expect(createdCourse2).toEqual({
@@ -68,9 +71,10 @@ describe('/course', () => {
             .expect(src_1.HTTP_STATUSES.OK_200, [createdCourse1, createdCourse2]);
     }));
     it(`should'nt update course with incorrect input data`, () => __awaiter(void 0, void 0, void 0, function* () {
+        const data = { title: '' };
         yield (0, supertest_1.default)(src_1.app)
             .put('/courses/' + createdCourse1.id)
-            .send({ title: '' })
+            .send(data)
             .expect(src_1.HTTP_STATUSES.BAD_REQUEST_400);
         yield (0, supertest_1.default)(src_1.app)
             .get('/courses/' + createdCourse1.id)
@@ -83,9 +87,10 @@ describe('/course', () => {
             .expect(src_1.HTTP_STATUSES.NOT_FOUND_404);
     }));
     it(`should update course with correct input data`, () => __awaiter(void 0, void 0, void 0, function* () {
+        const data = { title: 'good new title' };
         yield (0, supertest_1.default)(src_1.app)
             .put('/courses/' + createdCourse1.id)
-            .send({ title: 'good new title' })
+            .send(data)
             .expect(src_1.HTTP_STATUSES.NO_CONTENT_204);
         yield (0, supertest_1.default)(src_1.app)
             .get('/courses/' + createdCourse1.id)

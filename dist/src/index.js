@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.HTTP_STATUSES = exports.app = void 0;
 const express_1 = __importDefault(require("express"));
 exports.app = (0, express_1.default)();
-const port = 3000;
+const port = process.env.PORT || 5000;
 exports.HTTP_STATUSES = {
     OK_200: 200,
     CREATED_201: 201,
@@ -17,11 +17,17 @@ exports.HTTP_STATUSES = {
 exports.app.use(express_1.default.json());
 const db = {
     courses: [
-        { id: 1, title: 'front-end' },
-        { id: 2, title: 'back-end' },
-        { id: 3, title: 'automation qa' },
-        { id: 4, title: 'devops' }
+        { id: 1, title: 'front-end', studentsCount: 10 },
+        { id: 2, title: 'back-end', studentsCount: 10 },
+        { id: 3, title: 'automation qa', studentsCount: 10 },
+        { id: 4, title: 'devops', studentsCount: 10 }
     ]
+};
+const getViewModel = (dbCourse) => {
+    return {
+        id: dbCourse.id,
+        title: dbCourse.title
+    };
 };
 exports.app.get('/courses', (req, res) => {
     let foundCourses = db.courses;
@@ -29,7 +35,7 @@ exports.app.get('/courses', (req, res) => {
         foundCourses = foundCourses
             .filter(c => c.title.indexOf(req.query.title) > -1);
     }
-    res.json(foundCourses);
+    res.json(foundCourses.map(getViewModel));
 });
 exports.app.get('/courses/:id', (req, res) => {
     let found = db.courses.find(c => c.id === +req.params.id);
@@ -37,7 +43,7 @@ exports.app.get('/courses/:id', (req, res) => {
         res.sendStatus(exports.HTTP_STATUSES.NOT_FOUND_404);
         return;
     }
-    res.json(found);
+    res.json(getViewModel(found));
 });
 exports.app.post('/courses', (req, res) => {
     if (!req.body.title) {
@@ -46,10 +52,11 @@ exports.app.post('/courses', (req, res) => {
     }
     const createdCourse = {
         id: +(new Date()),
-        title: req.body.title
+        title: req.body.title,
+        studentsCount: 0
     };
     db.courses.push(createdCourse);
-    res.status(exports.HTTP_STATUSES.CREATED_201).json(createdCourse);
+    res.status(exports.HTTP_STATUSES.CREATED_201).json(getViewModel(createdCourse));
 });
 exports.app.delete('/courses/:id', (req, res) => {
     db.courses = db.courses.filter(c => c.id !== +req.params.id);
